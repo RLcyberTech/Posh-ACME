@@ -8,22 +8,22 @@ function Add-DnsTxt {
         [Parameter(Mandatory,Position=1)]
         [string]$TxtValue,
         [Parameter(ParameterSetName='Secure',Mandatory,Position=2)]
-        [securestring]$spDNSToken,
+        [securestring]$spDYNToken,
         [Parameter(ParameterSetName='DeprecatedInsecure',Mandatory,Position=2)]
-        [string]$spDNSTokenInsecure,
+        [string]$spDYNTokenInsecure,
         [Parameter(ValueFromRemainingArguments)]
         $ExtraParams
     )
 
     if ('Secure' -eq $PSCmdlet.ParameterSetName) {
-        $spDNSTokenInsecure = [pscredential]::new('a',$spDNSToken).GetNetworkCredential().Password
+        $spDYNTokenInsecure = [pscredential]::new('a',$spDYNToken).GetNetworkCredential().Password
     }
 
-    Write-Verbose "Adding spDNS TXT record via v3 API for $RecordName"
+    Write-Verbose "Adding spDYN TXT record via v3 API for $RecordName"
 
     $uri = "https://spdyn.de/api/3/host/acmeChallenge"
     $headers = @{
-        "Authorization" = "Bearer $spDNSTokenInsecure"
+        "Authorization" = "Bearer $spDYNTokenInsecure"
     }
 
     $body = @{
@@ -39,15 +39,15 @@ function Add-DnsTxt {
         $response = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $body -ContentType "application/json" @script:UseBasic -Verbose:$false -EA Stop
         Write-Debug "Response: $response"
     } catch {
-        throw "Failed to add spDNS TXT record via v3 API.`nError: $_"
+        throw "Failed to add spDYN TXT record via v3 API.`nError: $_"
     }
 
     <#
     .SYNOPSIS
-        Add a DNS TXT record to spDNS.
+        Add a DNS TXT record to spDYN.
 
     .DESCRIPTION
-        Add a DNS TXT record to spDNS using the v3 REST API.
+        Add a DNS TXT record to spDYN using the v3 REST API.
 
     .PARAMETER RecordName
         The fully qualified name of the TXT record (e.g., _acme-challenge.example.spdns.eu).
@@ -55,11 +55,11 @@ function Add-DnsTxt {
     .PARAMETER TxtValue
         The challenge value of the TXT record.
 
-    .PARAMETER spDNSToken
+    .PARAMETER spDYNToken
         The ACME Challenge Token generated in the spDYN portal for this host.
 
-    .PARAMETER spDNSTokenInsecure
-        (DEPRECATED) The plaintext ACME Challenge Token for spDNS.
+    .PARAMETER spDYNTokenInsecure
+        (DEPRECATED) The plaintext ACME Challenge Token for spDYN.
 
     .PARAMETER ExtraParams
         This parameter can be ignored and is only used to prevent errors when splatting with more parameters than this function supports.
@@ -78,22 +78,22 @@ function Remove-DnsTxt {
         [Parameter(Mandatory,Position=1)]
         [string]$TxtValue,
         [Parameter(ParameterSetName='Secure',Mandatory,Position=2)]
-        [securestring]$spDNSToken,
+        [securestring]$spDYNToken,
         [Parameter(ParameterSetName='DeprecatedInsecure',Mandatory,Position=2)]
-        [string]$spDNSTokenInsecure,
+        [string]$spDYNTokenInsecure,
         [Parameter(ValueFromRemainingArguments)]
         $ExtraParams
     )
 
     if ('Secure' -eq $PSCmdlet.ParameterSetName) {
-        $spDNSTokenInsecure = [pscredential]::new('a',$spDNSToken).GetNetworkCredential().Password
+        $spDYNTokenInsecure = [pscredential]::new('a',$spDYNToken).GetNetworkCredential().Password
     }
 
-    Write-Verbose "Removing spDNS TXT record via v3 API for $RecordName"
+    Write-Verbose "Removing spDYN TXT record via v3 API for $RecordName"
 
     $uri = "https://spdyn.de/api/3/host/acmeChallenge"
     $headers = @{
-        "Authorization" = "Bearer $spDNSTokenInsecure"
+        "Authorization" = "Bearer $spDYNTokenInsecure"
     }
 
     $body = @{
@@ -106,18 +106,18 @@ function Remove-DnsTxt {
         Write-Debug "Headers: @{ Authorization = 'Bearer REDACTED' }"
         Write-Debug "Body: $body"
 
-        # Capturing to out-null because spDNS returns HTTP 204 (No Content) which triggers no output object
+        # Capturing to out-null because spDYN returns HTTP 204 (No Content) which triggers no output object
         Invoke-RestMethod -Uri $uri -Method Delete -Headers $headers -Body $body -ContentType "application/json" @script:UseBasic -Verbose:$false -EA Stop | Out-Null
     } catch {
-        throw "Failed to remove spDNS TXT record via v3 API.`nError: $_"
+        throw "Failed to remove spDYN TXT record via v3 API.`nError: $_"
     }
 
     <#
     .SYNOPSIS
-        Remove a DNS TXT record from spDNS.
+        Remove a DNS TXT record from spDYN.
 
     .DESCRIPTION
-        Remove a DNS TXT record from spDNS using the v3 REST API.
+        Remove a DNS TXT record from spDYN using the v3 REST API.
 
     .PARAMETER RecordName
         The fully qualified name of the TXT record (e.g., _acme-challenge.example.spdns.eu).
@@ -125,11 +125,11 @@ function Remove-DnsTxt {
     .PARAMETER TxtValue
         The challenge value of the TXT record.
 
-    .PARAMETER spDNSToken
+    .PARAMETER spDYNToken
         The ACME Challenge Token generated in the spDYN portal for this host.
 
-    .PARAMETER spDNSTokenInsecure
-        (DEPRECATED) The plaintext ACME Challenge Token for spDNS.
+    .PARAMETER spDYNTokenInsecure
+        (DEPRECATED) The plaintext ACME Challenge Token for spDYN.
 
     .PARAMETER ExtraParams
         This parameter can be ignored and is only used to prevent errors when splatting with more parameters than this function supports.
